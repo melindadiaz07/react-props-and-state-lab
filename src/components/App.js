@@ -12,7 +12,15 @@ class App extends React.Component {
       }
     }
 
-    handleSelect = (selection) => {
+    onAdoptPet = (event, petId) => {
+      // event.target.isAdopted = true
+      // if (isAdopted) {
+        event.target.className = "ui disabled button"
+        event.currentTarget.previousSibling.className = "ui primary button"
+      // }
+    }
+
+    onChangeType = (selection) => {
       this.setState({
         filters:{
           type: selection
@@ -20,8 +28,15 @@ class App extends React.Component {
       })
     }
 
-    renderPets = () => {
-      fetch("/api/pets"+ `?type=${this.state.filters.type}`)
+    onFindPetsClick = () => {
+      let url;
+      if (this.state.filters.type === 'all') {
+        url = "/api/pets"
+      } else {
+        url = "/api/pets"+ `?type=${this.state.filters.type}`
+      }
+    
+      fetch(url)
       .then(res => res.json())
       .then(selectedPets => {
         this.setState({ pets: selectedPets.map(pet => pet)})
@@ -38,10 +53,10 @@ class App extends React.Component {
         <div className="ui container">
           <div className="ui grid">
             <div className="four wide column">
-              <Filters handleSelect={this.handleSelect} renderPets={this.renderPets} />
+              <Filters handleSelect={this.onChangeType} renderPets={this.onFindPetsClick} />
             </div>
             <div className="twelve wide column">
-              <PetBrowser selectedPets={this.state.pets} />
+              <PetBrowser selectedPets={this.state.pets} onAdoptPet={this.onAdoptPet} />
             </div>
           </div>
         </div>
